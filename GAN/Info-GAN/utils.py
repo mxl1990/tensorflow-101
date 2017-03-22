@@ -1,9 +1,8 @@
+# -*- coding: utf-8 -*-
 import collections
 import six
 import tensorflow as tf
 import sys
-
-
 
 
 class Opt(collections.MutableMapping):
