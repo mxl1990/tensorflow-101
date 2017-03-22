@@ -1,8 +1,6 @@
+# -*- coding: utf-8 -*-
 from tensorflow.examples.tutorials.mnist import input_data
 from utils import data_to_tensor, Opt
-
-
-
 
 
 class Mnist(object):
