@@ -83,7 +83,7 @@ disc_fake, cat_fake, con_fake = discriminator(gen)
 loss_d_r = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=disc_real, labels=y_real))
 loss_d_f = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=disc_fake, labels=y_fake))
 loss_d = (loss_d_r + loss_d_f) / 2
-print 'loss_d', loss_d.get_shape()
+print('loss_d', loss_d.get_shape())
 # generator loss
 loss_g = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=disc_fake, labels=y_real))
 
@@ -91,10 +91,10 @@ loss_g = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=disc_fake
 loss_c_r = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=cat_real, labels=y))
 loss_c_d = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=cat_fake, labels=z_cat))
 loss_c = (loss_c_r + loss_c_d) / 2
-print 'loss_c', loss_c.get_shape()
+print('loss_c', loss_c.get_shape())
 # continuous factor loss
 loss_con =tf.reduce_mean(tf.square(con_fake-z_con))
-print 'loss_con', loss_con.get_shape()
+print('loss_con', loss_con.get_shape())
 
 
 
@@ -102,7 +102,7 @@ train_disc, disc_global_step = optim(loss_d + loss_c + loss_con, lr=0.0001, opti
 train_gen, gen_global_step = optim(loss_g + loss_c + loss_con, lr=0.001, optim = 'Adm', category='generator')
 init = tf.global_variables_initializer()
 saver = tf.train.Saver()
-print train_gen
+print(train_gen)
 
 cur_epoch = 0
 cur_step = 0
@@ -127,11 +127,11 @@ with tf.Session() as sess:
 
             if cur_epoch> last_epoch:
                 cur_step = 0
-                print 'cur epoch {0} update l_d step {1}, loss_disc {2}, loss_gen {3}'.format(cur_epoch, l_d_step, l_disc, l_gen)
+                # print('cur epoch {0} update l_d step {1}, loss_disc {2}, loss_gen {3}'.format(cur_epoch, l_d_step, l_disc, l_gen))
                 if cur_epoch % save_epoch == 0:
                     # save
                     saver.save(sess, os.path.join('./checkpoint_dir', 'ac_gan'), global_step=l_d_step)
     except tf.errors.OutOfRangeError:
-        print 'Train Finished'
+        print('Train Finished')
     finally:
         coord.request_stop()

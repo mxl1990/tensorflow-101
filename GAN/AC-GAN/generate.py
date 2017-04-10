@@ -40,11 +40,11 @@ def run_generator(num, x1, x2, fig_name='sample.png'):
                 ax[i][j].imshow(imgs[i*10+j], 'gray')
                 ax[i][j].set_axis_off()
         plt.savefig(os.path.join('result/',fig_name), dpi=600)
-        print 'Sample image save to "result/{0}"'.format(fig_name)
+        print('Sample image save to "result/{0}"'.format(fig_name))
         plt.close()
 
 a = np.random.randint(0, cat_dim, batch_size)
-print a
+print(a)
 run_generator(a,
               np.random.uniform(0, 1, batch_size), np.random.uniform(0, 1, batch_size),
               fig_name='fake.png')
