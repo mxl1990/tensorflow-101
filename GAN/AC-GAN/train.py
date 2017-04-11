@@ -43,6 +43,7 @@ x = data.train.image
 y = data.train.label
 
 # labels for discriminator
+# 假设所有的图片都为真
 y_real = tf.ones(batch_size)
 y_fake = tf.zeros(batch_size)
 
@@ -107,6 +108,7 @@ print(train_gen)
 cur_epoch = 0
 cur_step = 0
 
+old = 0.0
 
 with tf.Session() as sess:
     sess.run(init)
@@ -116,8 +118,10 @@ with tf.Session() as sess:
             cur_step += 1
             dis_part = cur_step*1.0/num_batch_per_epoch
             dis_part = int(dis_part*50)
-            sys.stdout.write("process bar ::|"+"<"* dis_part+'|'+str(cur_step*1.0/num_batch_per_epoch*100)+'%'+'\r')
-            sys.stdout.flush()
+            if cur_step*1.0/num_batch_per_epoch*100 != old:
+            	old = cur_step*1.0/num_batch_per_epoch*100
+            	sys.stdout.write("process bar ::|"+"<"* dis_part+'|'+str(cur_step*1.0/num_batch_per_epoch*100)+'%'+'\r')
+            	sys.stdout.flush()
             l_disc, _, l_d_step = sess.run([loss_d, train_disc, disc_global_step])
             l_gen, _, l_g_step = sess.run([loss_g, train_gen, gen_global_step])
             last_epoch = cur_epoch
@@ -130,7 +134,7 @@ with tf.Session() as sess:
                 # print('cur epoch {0} update l_d step {1}, loss_disc {2}, loss_gen {3}'.format(cur_epoch, l_d_step, l_disc, l_gen))
                 if cur_epoch % save_epoch == 0:
                     # save
-                    saver.save(sess, os.path.join('./checkpoint_dir', 'ac_gan'), global_step=l_d_step)
+                    saver.save(sess, os.path.join('./', 'ac_gan'), global_step=l_d_step)
     except tf.errors.OutOfRangeError:
         print('Train Finished')
     finally:
