@@ -49,6 +49,7 @@ y_fake = tf.zeros(batch_size)
 
 
 # discriminator labels ( half 1s, half 0s )
+# 连接成一个一维tensor，前面部分为1，后面部分为0
 y_disc = tf.concat(axis=0, values=[y, y * 0])
 
 #
@@ -56,11 +57,15 @@ y_disc = tf.concat(axis=0, values=[y, y * 0])
 #
 
 # get random class number
+# 样本的随机分布（将样本所属类别的概率随机分布）
+# tf.ones生成全1的tensor
 z_cat = tf.multinomial(tf.ones((batch_size, cat_dim), dtype=tf.float32) / cat_dim, 1)
 z_cat = tf.squeeze(z_cat, -1)
+# 将z_cat转换成全为tf.int32的tensor
 z_cat = tf.cast(z_cat, tf.int32)
 
 # continuous latent variable
+# z_con是服从正态分布的batch_size*con_dim大小的tensor
 z_con = tf.random_normal((batch_size, con_dim))
 z_rand = tf.random_normal((batch_size, rand_dim))
 
