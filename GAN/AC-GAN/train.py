@@ -68,15 +68,17 @@ z_cat = tf.cast(z_cat, tf.int32)
 # z_con是服从正态分布的batch_size*con_dim大小的tensor
 z_con = tf.random_normal((batch_size, con_dim))
 z_rand = tf.random_normal((batch_size, rand_dim))
-
+# 连接三tensor
 z = tf.concat(axis=1, values=[tf.one_hot(z_cat, depth = cat_dim), z_con, z_rand])
 
 
 # generator network
+# 生成神经网络
 gen = generator(z)
 
 # add image summary
 # tf.sg_summary_image(gen)
+# 会改变图片数据？
 tf.summary.image('real', x)
 tf.summary.image('fake', gen)
 
@@ -127,7 +129,9 @@ with tf.Session() as sess:
             	old = cur_step*1.0/num_batch_per_epoch*100
             	sys.stdout.write("process bar ::|"+"<"* dis_part+'|'+str(cur_step*1.0/num_batch_per_epoch*100)+'%'+'\r')
             	sys.stdout.flush()
+            # 优化dicriminator
             l_disc, _, l_d_step = sess.run([loss_d, train_disc, disc_global_step])
+            # 优化generator
             l_gen, _, l_g_step = sess.run([loss_g, train_gen, gen_global_step])
             last_epoch = cur_epoch
             cur_epoch = l_d_step / num_batch_per_epoch
