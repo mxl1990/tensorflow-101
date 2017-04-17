@@ -5,7 +5,10 @@ import sys
 
 
 
-
+# 感觉Opt就是一个有可选项的容器
+# init的时候，将所有参数转换字典
+# 并且对于字典中已经存在的属性，不允许覆盖
+# 因为将参数放至__dict__因而能用.访问
 class Opt(collections.MutableMapping):
     r"""Option utility class.
 
