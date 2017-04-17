@@ -99,18 +99,19 @@ loss_g = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=disc_fake
 loss_c_r = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=cat_real, labels=y))
 loss_c_d = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=cat_fake, labels=z_cat))
 loss_c = (loss_c_r + loss_c_d) / 2
-print('loss_c', loss_c.get_shape())
+# print('loss_c', loss_c.get_shape())
 # continuous factor loss
 loss_con =tf.reduce_mean(tf.square(con_fake-z_con))
-print('loss_con', loss_con.get_shape())
+# print('loss_con', loss_con.get_shape())
 
 
-
+# optim: A name for optimizer. 'MaxProp' (default), 'AdaMax', 'Adam', or 'sgd'.
+# lr是learning rate, category变量指定需要被训练的变量
 train_disc, disc_global_step = optim(loss_d + loss_c + loss_con, lr=0.0001, optim = 'Adm', category='discriminator')
 train_gen, gen_global_step = optim(loss_g + loss_c + loss_con, lr=0.001, optim = 'Adm', category='generator')
 init = tf.global_variables_initializer()
 saver = tf.train.Saver()
-print(train_gen)
+# print(train_gen)
 
 cur_epoch = 0
 cur_step = 0
