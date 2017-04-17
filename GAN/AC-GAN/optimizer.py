@@ -19,6 +19,7 @@ def optim(loss, **kwargs):
     # opt += Opt(optim='MaxProp', lr=0.001, beta1=0.9, beta2=0.99, category='')
 
     # default training options
+    # 更新未选择选项的默认值
     opt += Opt(optim='MaxProp', lr=0.001, beta1=0.9, beta2=0.99, category='')
 
     # select optimizer
@@ -33,6 +34,8 @@ def optim(loss, **kwargs):
         optim = tf.train.GradientDescentOptimizer(learning_rate=opt.lr)
 
     # get trainable variables
+    # 通过opt.category变量字符串获取相关的变量
+    # 与之前variable_scope的调用相关
     if isinstance(opt.category, (tuple, list)):
         var_list = []
         for cat in opt.category:
@@ -41,6 +44,7 @@ def optim(loss, **kwargs):
         var_list = [t for t in tf.trainable_variables() if t.name.startswith(opt.category)]
 
     # calc gradient
+    # 计算变量的梯度
     gradient = optim.compute_gradients(loss, var_list=var_list)
 
     # add summary
