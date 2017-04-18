@@ -12,7 +12,7 @@ class Mnist(object):
     """
     _data_dir = globals.mnist_dir
 
-    def __init__(self, batch_size=128, num_epochs=30, reshape=False):
+    def __init__(self, batch_size=128, reshape=False):
 
         # load sg_data set
         # one_hot参数无用，因而删减
@@ -48,6 +48,8 @@ class Mnist(object):
 
         # calc total batch count
         # 计算总共的批处理的次数
+        # 每次训练batch_size个样本,总样本数除以每次的
+        # 可以知道训练完整个数据集一次，需要多少次训练
         self.train.num_batch = _train.labels.shape[0] // batch_size
         self.valid.num_batch = _valid.labels.shape[0] // batch_size
         self.test.num_batch = _test.labels.shape[0] // batch_size
