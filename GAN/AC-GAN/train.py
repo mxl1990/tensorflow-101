@@ -20,13 +20,17 @@ _logger.setLevel(0)
 # hyper parameters
 #
 
+# 每次训练大小
 batch_size = 32   # batch size
+# 分类个数
 cat_dim = 10  # total categorical factor
 con_dim = 2  # total continuous factor
-rand_dim = 38  
-num_epochs = 30
+rand_dim = 38
 debug_max_steps = 1000
+# 每5个阶段保存一次
 save_epoch = 5
+# 最大训练阶段数
+# (一阶段为训练完整数据集一次)
 max_epochs = 50
 
 #
@@ -34,11 +38,13 @@ max_epochs = 50
 #
 
 # MNIST input tensor ( with QueueRunner )
-data = Mnist(batch_size=batch_size, num_epochs=num_epochs)
+data = Mnist(batch_size=batch_size)
+# 每阶段训练的批次数量
 num_batch_per_epoch = data.train.num_batch
 
 
 # input images and labels
+# 训练数据和标签
 x = data.train.image
 y = data.train.label
 
@@ -57,18 +63,21 @@ y_disc = tf.concat(axis=0, values=[y, y * 0])
 #
 
 # get random class number
-# 样本的随机分布（将样本所属类别的概率随机分布）
-# tf.ones生成全1的tensor
+# tf.multinomial样本的随机分布（将样本所属类别的概率随机分布）
+# 返回的batch_size个数，每个代表所属类编号
 z_cat = tf.multinomial(tf.ones((batch_size, cat_dim), dtype=tf.float32) / cat_dim, 1)
+# 降维(参数-1轴不知道是哪个轴)
 z_cat = tf.squeeze(z_cat, -1)
 # 将z_cat转换成全为tf.int32的tensor
 z_cat = tf.cast(z_cat, tf.int32)
 
 # continuous latent variable
-# z_con是服从正态分布的batch_size*con_dim大小的tensor
+# con_dim = 2 rand_dim = 38
+# 这两个tensor含义不明
 z_con = tf.random_normal((batch_size, con_dim))
 z_rand = tf.random_normal((batch_size, rand_dim))
-# 连接三tensor
+# 这里用one_hot将z_cat转换成对应的类预测向量
+# z_cat本身是类编号，转换完成后变成对应位置上为1的向量
 z = tf.concat(axis=1, values=[tf.one_hot(z_cat, depth = cat_dim), z_con, z_rand])
 
 
@@ -91,7 +100,7 @@ disc_fake, cat_fake, con_fake = discriminator(gen)
 loss_d_r = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=disc_real, labels=y_real))
 loss_d_f = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=disc_fake, labels=y_fake))
 loss_d = (loss_d_r + loss_d_f) / 2
-print('loss_d', loss_d.get_shape())
+# print('loss_d', loss_d.get_shape())
 # generator loss
 loss_g = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=disc_fake, labels=y_real))
 
@@ -143,8 +152,11 @@ with tf.Session() as sess:
                 cur_step = 0
                 # print('cur epoch {0} update l_d step {1}, loss_disc {2}, loss_gen {3}'.format(cur_epoch, l_d_step, l_disc, l_gen))
                 if cur_epoch % save_epoch == 0:
-                    # save
-                    saver.save(sess, os.path.join('./', 'ac_gan'), global_step=l_d_step)
+                    #
+                    import globals
+                    if not os.path.exists(globals.midfile_dir):
+                    	os.makedirs(globals.midfile_dir)
+                    saver.save(sess, globals.midfile_dir + globals.mid_prefix, global_step=l_d_step)
     except tf.errors.OutOfRangeError:
         print('Train Finished')
     finally:
