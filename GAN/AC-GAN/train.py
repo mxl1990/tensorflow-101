@@ -93,6 +93,7 @@ tf.summary.image('fake', gen)
 
 #
 # discriminator
+# 输出的三个tensor的含义见论文
 disc_real, cat_real, _ = discriminator(x)
 disc_fake, cat_fake, con_fake = discriminator(gen)
 
@@ -152,10 +153,11 @@ with tf.Session() as sess:
                 cur_step = 0
                 # print('cur epoch {0} update l_d step {1}, loss_disc {2}, loss_gen {3}'.format(cur_epoch, l_d_step, l_disc, l_gen))
                 if cur_epoch % save_epoch == 0:
-                    #
+                    # 检查保存目录
                     import globals
                     if not os.path.exists(globals.midfile_dir):
                     	os.makedirs(globals.midfile_dir)
+                    # 保存目录包括：目录路径和文件名前缀
                     saver.save(sess, globals.midfile_dir + globals.mid_prefix, global_step=l_d_step)
     except tf.errors.OutOfRangeError:
         print('Train Finished')
