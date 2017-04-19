@@ -11,10 +11,14 @@ def discriminator(tensor, num_category=10, batch_size=32, num_cont=2):
     
     reuse = len([t for t in tf.global_variables() if t.name.startswith('discriminator')]) > 0
     # print(reuse)
-    # print(tensor.get_shape())    
+    # print(tensor.get_shape())
+    # 创建变量空间，下面创建的变量都以discriminator开头
     with variable_scope.variable_scope('discriminator', reuse=reuse):
-        # 卷积运算
-        tensor = slim.conv2d(tensor, num_outputs = 64, kernel_size=[4,4], stride=2, activation_fn=leaky_relu)
+        # tensor 卷积-> tensor 卷积-> tensor flatten->tensor
+        # tensor 全连接-> shared_tensor 全连接->disc squeeze->disc
+        # tensor 全连接-> shared_tensor 全连接->recog_shared全连接->recog_cat
+        # tensor 全连接-> shared_tensor 全连接->recog_shared全连接->recog_cont
+        tensor = slim.conv2d(tensor, num_outputs=64, kernel_size=[4,4], stride=2, activation_fn=leaky_relu)
         tensor = slim.conv2d(tensor, num_outputs=128, kernel_size=[4,4], stride=2, activation_fn=leaky_relu)
         tensor = slim.flatten(tensor)
         shared_tensor = slim.fully_connected(tensor, num_outputs=1024, activation_fn = leaky_relu)
