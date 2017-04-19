@@ -41,7 +41,7 @@ def run_generator(num, x1, x2, fig_name='sample.png'):
                 ax[i][j].imshow(imgs[i*10+j], 'gray')
                 ax[i][j].set_axis_off()
         import globals
-        plt.savefig(gen_image_dir + fig_name, dpi=600)
+        plt.savefig(globals.gen_image_dir + fig_name, dpi=600)
         print('Sample image save to "result/{0}"'.format(fig_name))
         plt.close()
 
