@@ -32,7 +32,8 @@ def run_generator(num, x1, x2, fig_name='sample.png'):
         sess.run(tf.group(tf.global_variables_initializer(),
                       tf.local_variables_initializer()))
         saver = tf.train.Saver()
-        saver.restore(sess, tf.train.latest_checkpoint('checkpoint_dir'))
+        import globals
+        saver.restore(sess, tf.train.latest_checkpoint(globals.midfile_dir))
         imgs = sess.run(gen, {target_num: num, target_cval_1: x1, target_cval_2:x2})
 
         _, ax = plt.subplots(10,10, sharex=True, sharey=True)
@@ -40,12 +41,12 @@ def run_generator(num, x1, x2, fig_name='sample.png'):
             for j in range(10):
                 ax[i][j].imshow(imgs[i*10+j], 'gray')
                 ax[i][j].set_axis_off()
-        plt.savefig(os.path.join('result/',fig_name), dpi=600)
-        print 'Sample image save to "result/{0}"'.format(fig_name)
+        plt.savefig(globals.gen_image_dir + fig_name, dpi=600)
+        print('Sample image save to "result/{0}"'.format(fig_name))
         plt.close()
 
 a = np.random.randint(0, cat_dim, batch_size)
-print a
+# print a
 run_generator(a,
               np.random.uniform(0, 1, batch_size), np.random.uniform(0, 1, batch_size),
               fig_name='fake.png')
