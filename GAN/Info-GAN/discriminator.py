@@ -11,8 +11,8 @@ def discriminator(tensor, num_category=10, batch_size=32, num_cont=2):
     """
     
     reuse = len([t for t in tf.global_variables() if t.name.startswith('discriminator')]) > 0
-    print reuse
-    print tensor.get_shape()
+    # print reuse
+    # print tensor.get_shape()
     with variable_scope.variable_scope('discriminator', reuse=reuse):
         tensor = slim.conv2d(tensor, num_outputs = 64, kernel_size=[4,4], stride=2, activation_fn=leaky_relu)
         tensor = slim.conv2d(tensor, num_outputs=128, kernel_size=[4,4], stride=2, activation_fn=leaky_relu)
