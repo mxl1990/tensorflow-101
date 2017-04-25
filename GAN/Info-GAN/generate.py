@@ -10,9 +10,13 @@ import os
 _logger = tf.logging._logger
 _logger.setLevel(0)
 
+# 每次训练的样本个数
 batch_size = 100   # batch size
+# 分类参数个数
 cat_dim = 10   # total categorical factor
+# 连续因子？
 con_dim = 2    # total continuous factor
+# 连续潜在梯度
 rand_dim = 38  # total random latent dimension
 
 
@@ -21,9 +25,9 @@ target_cval_1 = tf.placeholder(dtype=tf.float32, shape=batch_size)
 target_cval_2 = tf.placeholder(dtype=tf.float32, shape=batch_size)
 
 z = tf.one_hot(tf.ones(batch_size, dtype=tf.int32) * target_num, depth=cat_dim)
-z = tf.concat(axis=z.get_shape().ndims-1, values=[z, tf.expand_dims(target_cval_1, -1), tf.expand_dims(target_cval_2, -1)])
+z = tf.concat(axis=z.get_shape().ndims - 1, values=[z, tf.expand_dims(target_cval_1, -1), tf.expand_dims(target_cval_2, -1)])
 
-z = tf.concat(axis=z.get_shape().ndims-1, values=[z, tf.random_normal((batch_size, rand_dim))])
+z = tf.concat(axis=z.get_shape().ndims - 1, values=[z, tf.random_normal((batch_size, rand_dim))])
 
 gen = tf.squeeze(generator(z), -1)
 
